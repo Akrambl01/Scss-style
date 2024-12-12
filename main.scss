@@ -1,0 +1,399 @@
+// Import global rules
+@use "./sass/layout/global-rules";
+
+// Import Pages
+@use "./sass/pages/contact";
+
+// Import variables 
+@use "./sass/variables/colors" as *;
+
+// Import Mixins
+@use "./sass/helpers/mixin" as *;
+
+// Import Functions
+@use "./sass/helpers/functions" as *;
+
+// global variable
+$alt_color: green;
+
+.header {
+    color: $alt_color;
+}
+
+.footer {
+    // local variable
+    $alt_color: black !global;
+    background-color: $alt_color;
+}
+
+.copyright {
+    background-color: $alt_color;
+}
+
+.sidebar {
+    background-color: $main;
+    color: $alt;
+}
+
+$max_mobile: "max-width: 575px";
+
+@media ($max_mobile){
+    .sidebar {
+        padding: 20px;
+    }
+}
+
+.parent {
+    font-weight: bold;
+    .child{
+        font-size: 20px;
+        .grand-child{
+            font-size: 15px;
+        }
+    }
+}
+
+.parent-one, 
+.parent-two {
+    padding: 20px;
+    .child {
+        padding: 10px;
+    }
+}
+
+.parent > {
+    .child {
+      font-size: 20px;
+    }
+    .test {
+      font-weight: bold;
+    }
+  }
+  
+.parent {
+    > .child {
+        font-size: 20px;
+    }
+    .test {
+        font-weight: bold;
+    }
+    + p {
+        font-size: 15px;
+    }
+}
+  
+.parent {
+    > {
+        .element-one {
+        font-size: 10px;
+        }
+        .element-two {
+        font-size: 10px;
+        }
+    }
+    .not-direct-child {
+        font-weight: bold;
+    }
+}
+  
+.box {
+    .title {
+        font-size: 10px;
+    }
+    .description {
+        font-size: 8px;
+    }
+    &.red {
+        color: red;
+    }
+    &.green {
+        color: green;
+    }
+    &:hover {
+        background-color: #eee;
+    }
+    &:hover .title {
+        font-weight: bold;
+    }
+    :not(&) {
+        font-weight: normal;
+    }
+    [dir="rtl"] & {
+        direction: rtl;
+    }
+}
+
+.box {
+    font-size: 20px;
+    font: {
+        size: 15px;
+        weight: bold;
+    }
+    padding: 10px;
+    margin: auto {
+        top: 10px;
+        bottom: 15px;
+        left: 9px;
+    }
+}
+
+// placeholder
+%main-box {
+    background-color: white;
+    padding: 15px;
+    border: 1px solid #ccc;
+}
+
+.ads {
+    @extend %main-box;
+    font-size: 20px;
+    color: red;
+}
+
+.article {
+    @extend %main-box;
+    font-size: 22px;
+    color: green;
+}
+
+// Control flow => if and Else
+
+$theme: "dark";
+
+.page {
+    @if $theme == "light" {
+        background-color: white;
+        color: #444;
+    } @else {
+        background-color: #444;
+        color: white
+    }
+}
+
+$rounded: true;
+
+.box{
+    @extend %main-box;
+    border-radius: if($rounded, 6px, null);
+}
+
+// practice
+
+$direction: 'left';
+
+.arrow-div{
+    @extend %main-box;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    height: 300px;
+    position: relative;
+    margin: 50px auto;
+    &::before {
+        content: "";
+        position: absolute;
+        border: 20px solid transparent;
+        @if $direction == "top" {
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-color: red;
+        } @else if $direction == "right" {
+            right: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-left-color: red;
+        }@else if $direction == "bottom" {
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-top-color: red;
+        }@else if $direction == "left" {
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-right-color: red;
+        } @else {
+            @error "this direction #{$direction} is not valid" ;
+        }
+    }
+}
+
+// interpolation
+$company: "flacon";
+$position: "right";
+
+.ad-#{$company}-#{unique-id()} {
+    font-size: 20px;
+    background-color: url("images/#{$company}.png");
+    #{$position}: 0;
+}
+
+.ad-#{unique-id()} {
+    font-weight: bold;
+}
+
+/* In css file */
+/*! In css file and compressed file */
+/* Style for #{$company}*/
+/// For documenation
+/// @param {num}
+/// The number to deal with
+/// @return {int}
+
+// Mixin & Include
+
+ul.links {
+    @include list-reset;
+}
+
+.circle-100 {
+    @include circle(100px);
+    background-color: red;
+    color: white;
+}
+
+.center-circle {
+    @include circle(400px);
+    @include centering ;
+}
+
+// Loop => For
+
+@for $i from 1 through 10 {
+    .class-#{$i} {
+        font-size: #{$i + 10px};
+    }
+}
+
+$dimensions: 0;
+
+@for $i from 1 through 10 { 
+    .circle-#{100 + $dimensions} {
+        width: $dimensions + 100px;
+        height: $dimensions + 100px;
+        border-radius: 50%;
+        background-color: burlywood;
+    }
+    $dimensions: $dimensions + 100;
+}
+
+// Each & maps
+
+$themes: red, green, blue, orange;
+
+@each $theme in $themes {
+    .#{$theme}-theme {
+        .product {
+            background-color: white;
+            border-bottom: 2px solid $theme;
+            .title {
+                color: $theme;
+                font-weight: bold;
+            }
+        }
+    }
+}
+
+$socials: (
+  "facebook": blue,
+  "youtube": red,
+  "github": black,
+  "twitter": indianred,
+);
+
+@each $name, $color in $socials {
+    .#{$name} {
+        background-color: $color;
+        color: white;
+        &::before {
+            content: $name;
+        }
+    }
+}
+
+$classes: "one" 20px red, "two" 15px green, "three" 22px blue;
+
+@each $class, $font, $color in $classes {
+  .#{$class} {
+    font-size: $font;
+    background-color: $color;
+    color: white;
+    padding: $font / 2;
+  }
+}
+
+// Loop => While
+
+$start: 1;
+
+@while $start <= 10 {
+    .width-#{$start * 100} {
+        width: $start * 100px;
+        height: ($start * 100px) / 2;
+    }
+    $start: $start + 1 ;
+}
+
+// Create Grid System
+
+$grid_cols: 12;
+
+@for $i from 1 through $grid_cols {
+    .col-#{$i} {
+        width: percentage($i / $grid_cols);
+    }
+}
+
+// Function
+
+$width: 200px;
+
+.element {
+  width: $width;
+  height: half($width);
+  top: calculate(100px, 200px, 50px);
+}
+
+// Practice Mixin With Content
+
+.black-overlay {
+    @include overlay(black, .5);
+}
+
+@include keyF(fade-in){
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@include keyF(go-up){
+    from {
+        bottom: o;
+    }
+    to {
+        bottom: 100px;
+    }
+}
+
+// Practice Create Media Queries Mixin
+// If Condition + Mixin + Content
+
+.media {
+    @include breakpoints(mobile) {
+        font-size: 15px;
+    }
+    @include breakpoints(small) {
+        font-size: 18px;
+    }
+    @include breakpoints(medium) {
+        font-size: 20px;
+    }
+    @include breakpoints(large) {
+        font-size: 22px;
+    }
+}
